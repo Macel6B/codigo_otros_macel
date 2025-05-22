@@ -23,36 +23,36 @@
 
 const nameElement = document.getElementById("name");
 const blog = document.getElementById("blog");
-const location = document.querySelector('.location');
-const baseEndpoint = 'https://api.github.com';
-const usersEndpoint = `${baseEndpoint}/users/${user_name}`;
+const location = document.querySelector(".location");
 
-//Función para llamar la API
-function usarAPI(nameElement) {
-  fetch(usersEndpoint)
-  .then(function(response) {
+const baseEndpoint = "https://api.github.com";
+const usersEndpoint = `${baseEndpoint}/users`;
+
+// Función para llamar a la API
+function usarAPI(username) {
+ 
+  nameElement.textContent = "Cargando...";
+
+  fetch(`${usersEndpoint}/${username}`)
+    .then(function (response) {
       return response.json();
     })
-    .then(function(data) {
-      console.log(data);
-      user_name.textContent = `${data.user_name}`;
-      blog.textContent = `${data.blog}`;
-      location.textContent = `${data.location}`; 
-      return response.json();
-    })
+    .then(function (data) {
+      if (!data.name) {
+        throw new Error("Usuario no encontrado");
+      }
 
-    
-    // .then(function(data) {
-    //   const data_response = (`${usersEndpoint}/${user_name}`);
-    //   console.log(data);
-    //   user_name.textContent = '${data.user_name}';
-    //   blog.textContent = '${data.blog}';
-    //   location.textContent = '${data.location}';        
-    //   return data_response
-    //})
-    .catch(function(error) {
-      console.log("Ocurrió un error:", error);
-      user_name.textContent = "Error al llamar a la API.";
+      // Intervención del DOM
+      nameElement.textContent = data.name;
+      blog.textContent = data.blog;
+      location.textContent = data.location;
+    })
+    .catch(function (error) {
+      console.log("Ocurrió un error:", error.message);
+      nameElement.textContent = "Error al llamar a la API.";
+      blog.textContent = "-";
+      location.textContent = "-";
     });
 }
 
+usarAPI("stolinski");
